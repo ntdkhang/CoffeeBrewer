@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="19141.11" systemVersion="20F71" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="Brew" representedClassName="Brew" syncable="YES" codeGenerationType="class">
+        <attribute name="date_" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id_" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="methodName_" optional="YES" attributeType="String"/>
+        <attribute name="note_" optional="YES" attributeType="String"/>
+        <attribute name="process_" optional="YES" attributeType="String"/>
+        <relationship name="characteristics_" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Characteristics" inverseName="brews_" inverseEntity="Characteristics"/>
+        <relationship name="coffee_" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Coffee" inverseName="brews_" inverseEntity="Coffee"/>
+    </entity>
+    <entity name="Characteristics" representedClassName="Characteristics" syncable="YES" codeGenerationType="class">
+        <attribute name="acidityQuality_" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="acidityQuantity_" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="aromaQuality_" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="aromaQuantity_" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="bodyQuality_" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="bodyQuantity_" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="finishQuality_" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="finishQuantity_" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="flavour_" optional="YES" attributeType="String"/>
+        <attribute name="sweetnessQuality_" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="sweetnessQuantity_" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="brews_" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Brew" inverseName="characteristics_" inverseEntity="Brew"/>
+    </entity>
+    <entity name="Coffee" representedClassName="Coffee" syncable="YES" codeGenerationType="class">
+        <attribute name="brand_" optional="YES" attributeType="String"/>
+        <attribute name="id_" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="name_" optional="YES" attributeType="String"/>
+        <relationship name="brews_" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Brew" inverseName="coffee_" inverseEntity="Brew"/>
+    </entity>
+    <elements>
+        <element name="Brew" positionX="-371.3974609375" positionY="-336.1806030273437" width="128" height="148"/>
+        <element name="Characteristics" positionX="-218.15283203125" positionY="-97.462890625" width="128" height="223"/>
+        <element name="Coffee" positionX="-555.7998657226562" positionY="-45.209716796875" width="128" height="103"/>
+    </elements>
+</model>

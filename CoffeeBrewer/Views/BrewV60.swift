@@ -6,10 +6,17 @@
 //
 
 import SwiftUI
+import CoreData
 
 struct BrewV60: View {
-    @State var coffee: Coffee = DataTemplate().coffees[0]
+    @Environment(\.managedObjectContext) private var viewContext
+    @FetchRequest(
+        sortDescriptors: [NSSortDescriptor(keyPath: \Coffee.name_, ascending: true)],
+        animation: .default)
+    private var coffees: FetchedResults<Coffee>
+    @State var coffeeInfo = CoffeeInfo()
     @State var presentCoffeeChooser: Bool = false
+    @State var startBrewing: Bool = false
     var body: some View {
         VStack {
             List {
@@ -19,38 +26,48 @@ struct BrewV60: View {
                         presentCoffeeChooser = true
                     }
                     .popover(isPresented: $presentCoffeeChooser) {
-                        CoffeeChooser(coffee: $coffee)
+                        CoffeeChooser(coffeeInfo: $coffeeInfo)
+                            .environment(\.managedObjectContext, viewContext)
     //                        .preferredColorScheme(.dark)
                     }
                 
-                Text("Name: \(coffee.name)")
-                Text("Brand: \(coffee.brand)")
+                Text("Name: \(coffeeInfo.name)")
+                Text("Brand: \(coffeeInfo.brand)")
             }
             .listStyle(.insetGrouped)
             .navigationTitle("V60")
             
         // TODO: Add coffee & water measurement
-            BrewProcess(coffee: coffee)
+            if startBrewing == true {
+                BrewProcess(coffeeInfo: coffeeInfo)
+            } else {
+                Button(action: {startBrewing = true },
+                       label: { Text("Start Brewing") })
+            }
         }
     }
 }
 
 
 struct BrewProcess: View {
-    @ObservedObject var stopWatch = StopWatch()
+    @ObservedObject var stopWatch: StopWatch = StopWatch()
     @State private var laps: [Int] = []
-    var coffee: Coffee
-    
+    @State private var lastLap: Int = 0
+    @State private var showBrewReview: Bool = false
+                    
+    var coffeeInfo: CoffeeInfo
+                    
     var body: some View {
         VStack {
             ForEach(laps, id: \.self) { lap in
                 Text("\(lap)")
             }
             
-            Text("\(stopWatch.seconds)")
+            Text("\(stopWatch.seconds - lastLap)")
             HStack {
                 Button(action: {
                     laps.append(stopWatch.seconds)
+                    lastLap = laps.last ?? 0
                 },      label: {
                     ZStack {
                         Circle()
@@ -73,9 +90,11 @@ struct BrewProcess: View {
                     ZStack {}
                     .frame(width: watchButtonSize, height: watchButtonSize)
                 }
-                
+                // MARK: - Show BrewReview
                 Button(action: {
+                    laps.append(stopWatch.seconds)
                     stopWatch.stop()
+                    showBrewReview = true
                 },      label: {
                     ZStack {
                         Circle()
@@ -85,21 +104,31 @@ struct BrewProcess: View {
                 }).buttonStyle(PlainButtonStyle())
             }
         }
+        .popover(isPresented: $showBrewReview,
+                 content: { BrewReview(coffeeInfo: coffeeInfo,
+                                       methodName: "V60") })
     }
     private var watchButtonSize: CGFloat = 100
     
     
-    init(coffee: Coffee) {
-        self.coffee = coffee
+    init(coffeeInfo: CoffeeInfo) {
+        self.coffeeInfo = coffeeInfo
     }
     
 }
 
 
 struct CoffeeChooser: View {
+    @Environment(\.managedObjectContext) private var viewContext
+
+    @FetchRequest(
+        sortDescriptors: [NSSortDescriptor(keyPath: \Coffee.name_, ascending: true)],
+        animation: .default)
+    private var coffees: FetchedResults<Coffee>
+    
     @State private var name: String = ""
     @State private var brand: String = ""
-    @Binding var coffee: Coffee
+    @Binding var coffeeInfo: CoffeeInfo
     @Environment(\.presentationMode) var presentationMode
     var body: some View {
         VStack {
@@ -107,7 +136,10 @@ struct CoffeeChooser: View {
             HStack {
                 Spacer()
                 Button("Done") {
-                    coffee = Coffee(name: name, brand: brand)
+                    if !(name.isEmpty && brand.isEmpty) {
+                        coffeeInfo.name = name
+                        coffeeInfo.brand = brand
+                    }
                     presentationMode.wrappedValue.dismiss()
                 }
             }.padding()
@@ -120,10 +152,10 @@ struct CoffeeChooser: View {
                 }
                 
                 Section(header: Text("Choosee Existing Coffee")) {
-                    ForEach(DataTemplate().coffees) { existingCoffee in
-                        Text("\(existingCoffee.brand)'s \(existingCoffee.name)")
+                    ForEach(coffees, id: \.id_) { existingCoffee in
+                        Text("\(existingCoffee.brand )'s \(existingCoffee.name)")
                             .onTapGesture {
-                                coffee = existingCoffee
+                                coffeeInfo = existingCoffee.coffeeInfo
                                 presentationMode.wrappedValue.dismiss()
                             }
                     }

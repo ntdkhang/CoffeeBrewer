@@ -8,8 +8,11 @@
 import SwiftUI
 
 struct BrewReview: View {
+    @Environment(\.managedObjectContext) private var viewContext
+    
+    var coffeeInfo: CoffeeInfo
+
     var methodName: String
-    var coffee: Coffee
     @State var aromaQuantity: Double = 0
     @State var aromaQuality: Double = 0
     @State var acidityQuantity: Double = 0
@@ -20,20 +23,23 @@ struct BrewReview: View {
     @State var bodyQuality: Double = 0
     @State var finishQuantity: Double = 0
     @State var finishQuality: Double = 0
-    
+
     @State var flavour: String = ""
     @State var note: String = ""
-    
+
     @Environment(\.presentationMode) var presentationMode
+    @EnvironmentObject var navigationController: NavigationController
     var body: some View {
 
         VStack {
             HStack {
                 Spacer()
                 Button("Done") {
+                    writeReview()
+                    navigationController.showMenu = false
                     presentationMode.wrappedValue.dismiss()
                 }.padding([.trailing])
-                
+
             }
             List {
                 // MARK: - Aroma
@@ -43,21 +49,21 @@ struct BrewReview: View {
                             .frame(width: textWidth, alignment: .leading)
                         Text("\(String(format: "%02d", Int(aromaQuantity)))")
                             .font(Font.headline.monospacedDigit())
-                        
+
                         Slider(value: $aromaQuantity, in: 0...10, step: 1)
                     }
-                    
+
                     HStack {
                         Text("Quality:")
                             .frame(width: textWidth, alignment: .leading)
                         Text("\(String(format: "%02d", Int(aromaQuality)))")
                             .font(Font.headline.monospacedDigit())
-                        
+
                         Slider(value: $aromaQuality, in: 0...10, step: 1)
                     }
                 }
-                
-                
+
+
                 // MARK: - Acidity
                 Section(header: Text("Acidity")) {
                     HStack {
@@ -65,21 +71,21 @@ struct BrewReview: View {
                             .frame(width: textWidth, alignment: .leading)
                         Text("\(String(format: "%02d", Int(acidityQuantity)))")
                             .font(Font.headline.monospacedDigit())
-                        
+
                         Slider(value: $acidityQuantity, in: 0...10, step: 1)
                     }
-                    
+
                     HStack {
                         Text("Quality:")
                             .frame(width: textWidth, alignment: .leading)
                         Text("\(String(format: "%02d", Int(acidityQuality)))")
                             .font(Font.headline.monospacedDigit())
-                        
+
                         Slider(value: $acidityQuality, in: 0...10, step: 1)
                     }
                 }
-                
-                
+
+
                 // MARK: - Sweet
                 Section(header: Text("Sweetness")) {
                     HStack {
@@ -87,21 +93,21 @@ struct BrewReview: View {
                             .frame(width: textWidth, alignment: .leading)
                         Text("\(String(format: "%02d", Int(sweetnessQuantity)))")
                             .font(Font.headline.monospacedDigit())
-                        
+
                         Slider(value: $sweetnessQuantity, in: 0...10, step: 1)
                     }
-                    
+
                     HStack {
                         Text("Quality:")
                             .frame(width: textWidth, alignment: .leading)
                         Text("\(String(format: "%02d", Int(sweetnessQuality)))")
                             .font(Font.headline.monospacedDigit())
-                        
+
                         Slider(value: $sweetnessQuality, in: 0...10, step: 1)
                     }
                 }
-                
-                
+
+
                 // MARK: - Body
                 Section(header: Text("Body")) {
                     HStack {
@@ -109,21 +115,21 @@ struct BrewReview: View {
                             .frame(width: textWidth, alignment: .leading)
                         Text("\(String(format: "%02d", Int(bodyQuantity)))")
                             .font(Font.headline.monospacedDigit())
-                        
+
                         Slider(value: $bodyQuantity, in: 0...10, step: 1)
                     }
-                    
+
                     HStack {
                         Text("Quality:")
                             .frame(width: textWidth, alignment: .leading)
                         Text("\(String(format: "%02d", Int(bodyQuality)))")
                             .font(Font.headline.monospacedDigit())
-                        
+
                         Slider(value: $bodyQuality, in: 0...10, step: 1)
                     }
                 }
-                
-                
+
+
                 // MARK: - Finish
                 Section(header: Text("Finish")) {
                     HStack {
@@ -131,59 +137,72 @@ struct BrewReview: View {
                             .frame(width: textWidth, alignment: .leading)
                         Text("\(String(format: "%02d", Int(finishQuantity)))")
                             .font(Font.headline.monospacedDigit())
-                        
+
                         Slider(value: $finishQuantity, in: 0...10, step: 1)
                     }
-                    
+
                     HStack {
                         Text("Quality:")
                             .frame(width: textWidth, alignment: .leading)
                         Text("\(String(format: "%02d", Int(finishQuality)))")
                             .font(Font.headline.monospacedDigit())
-                        
+
                         Slider(value: $finishQuality, in: 0...10, step: 1)
                     }
                 }
-                
-                
+
+
                 // MARK: - Flavour
                 Section(header: Text("Flavour")) {
                     TextField("Enter flavour", text: $flavour)
                 }
-                
-                
+
+
                 // MARK: - Note
                 Section(header: Text("Additional note")) {
                     TextEditor(text: $note)
                 }
-                
+
             }
             .listStyle(.insetGrouped)
         }
     }
+    
     private var textWidth: CGFloat {
         CGFloat(100)
     }
-    
+
     private func writeReview() {
-        let brew = Brew(
-            methodName: methodName, coffee: coffee,
-            characteristics:
-                Characteristics(
-                    aroma: Grading(quantity: Int(aromaQuantity), quality: Int(aromaQuality)),
-                    acidity: Grading(quantity: Int(acidityQuantity), quality: Int(acidityQuality)),
-                    sweetness: Grading(quantity: Int(sweetnessQuantity), quality: Int(sweetnessQuality)),
-                    body: Grading(quantity: Int(bodyQuantity), quality: Int(bodyQuality)),
-                    finish: Grading(quantity: Int(finishQuantity), quality: Int(finishQuality)),
-                    flavour: flavour),
-            note: note)
-        // TODO: Write the brew to data model
+    let newBrew = Brew(context: viewContext)
+        newBrew.methodName = methodName
+        newBrew.coffee = Coffee(context: viewContext)
+        newBrew.coffee.readCoffeeInfo(from: coffeeInfo)
+        
+        newBrew.characteristics = Characteristics(context: viewContext)
+        
+        newBrew.characteristics.aromaQuantity = Int(aromaQuantity)
+        newBrew.characteristics.aromaQuality = Int(aromaQuality)
+        
+        newBrew.characteristics.acidityQuantity = Int(acidityQuantity)
+        newBrew.characteristics.acidityQuality = Int(acidityQuality)
+        
+        newBrew.characteristics.sweetnessQuantity = Int(sweetnessQuantity)
+        newBrew.characteristics.sweetnessQuality = Int(sweetnessQuality)
+        
+        newBrew.characteristics.bodyQuantity = Int(bodyQuantity)
+        newBrew.characteristics.bodyQuality = Int(bodyQuality)
+        
+        newBrew.characteristics.finishQuantity = Int(finishQuantity)
+        newBrew.characteristics.finishQuality = Int(finishQuality)
+        newBrew.note = note
+        
+        try? viewContext.save()
     }
 }
 
-struct BrewReview_Previews: PreviewProvider {
-    static var previews: some View {
-        BrewReview(methodName: "V60", coffee: DataTemplate().coffees[0])
-            .preferredColorScheme(.dark)
-    }
-}
+//struct BrewReview_Previews: PreviewProvider {
+//    static var previews: some View {
+//        BrewReview(methodName: "V60", coffee: DataTemplate().coffees[0])
+//            .preferredColorScheme(.dark)
+//    }
+//}

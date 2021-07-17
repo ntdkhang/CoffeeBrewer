@@ -9,7 +9,6 @@ import Foundation
 
 class StopWatch: ObservableObject {
     @Published var seconds = 0
-    @Published var minutes = 0
     
     var state: StopWatchState = .stopped
     var timer = Timer()
@@ -30,11 +29,18 @@ class StopWatch: ObservableObject {
         state = .stopped
         timer.invalidate()
         seconds = 0
-        minutes = 0
     }
     
     func lap() -> Int {
         0
+    }
+    
+    var timeInSeconds: Int {
+        seconds % 60
+    }
+    
+    var timeInMinutes: Int {
+        seconds / 60
     }
     
     enum StopWatchState {
