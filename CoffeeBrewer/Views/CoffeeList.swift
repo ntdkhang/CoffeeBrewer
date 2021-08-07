@@ -1,43 +1,38 @@
 //
-//  ContentView.swift
+//  CoffeeGroundsList.swift
 //  CoffeeBrewer
 //
-//  Created by Nguyen Tran Duy Khang on 7/3/21.
+//  Created by Nguyen Tran Duy Khang on 7/13/21.
 //
 
 import SwiftUI
-import CoreData
 
-struct ContentViewCoreData: View {
+struct CoffeeList: View {
     @Environment(\.managedObjectContext) private var viewContext
-
-    @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \Item.timestamp, ascending: true)],
-        animation: .default)
-    private var items: FetchedResults<Item>
-
+    
+    @FetchRequest(sortDescriptors: [NSSortDescriptor(keyPath: \Coffee.name_, ascending: true)], predicate: nil, animation: .default)
+    private var coffees: FetchedResults<Coffee>
+    
+    
     var body: some View {
-        List {
-            ForEach(items) { item in
-                Text("Item at \(item.timestamp!, formatter: itemFormatter)")
-            }
-            .onDelete(perform: deleteItems)
-        }
-        .toolbar {
-            #if os(iOS)
-            EditButton()
-            #endif
-
-            Button(action: addItem) {
-                Label("Add Item", systemImage: "plus")
+        VStack {
+//            Button("add new item") {
+//                addItem()
+//            }
+            Button(action: {},
+                   label: { Text("Filter") })
+            List {
+                ForEach(coffees) { coffee in
+                    Text("\(coffee.name)")
+                }.onDelete(perform: { deleteItems(offsets: $0)} )
             }
         }
     }
-
+    
     private func addItem() {
         withAnimation {
-            let newItem = Item(context: viewContext)
-            newItem.timestamp = Date()
+            let newCoffee = Coffee(context: viewContext)
+            newCoffee.name = "BlaBlo \(Int.random(in: 0...100))"
 
             do {
                 try viewContext.save()
@@ -52,7 +47,7 @@ struct ContentViewCoreData: View {
 
     private func deleteItems(offsets: IndexSet) {
         withAnimation {
-            offsets.map { items[$0] }.forEach(viewContext.delete)
+            offsets.map { coffees[$0] }.forEach(viewContext.delete)
 
             do {
                 try viewContext.save()
@@ -66,15 +61,9 @@ struct ContentViewCoreData: View {
     }
 }
 
-private let itemFormatter: DateFormatter = {
-    let formatter = DateFormatter()
-    formatter.dateStyle = .short
-    formatter.timeStyle = .medium
-    return formatter
-}()
-
-struct ContentViewCoreData_Previews: PreviewProvider {
+struct CoffeeList_Previews: PreviewProvider {
     static var previews: some View {
-        ContentViewCoreData().environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+        CoffeeList()
+            .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
     }
 }

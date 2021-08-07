@@ -9,13 +9,15 @@ import SwiftUI
 
 @main
 struct CoffeeBrewerApp: App {
+    let persistenceController = PersistenceController.shared
 
     var body: some Scene {
         WindowGroup {
-            NavigationView {
-                BrewV60()
-            }
-            .preferredColorScheme(.dark)
+//            CoffeeList()
+            ContentView()
+                .environment(\.managedObjectContext, persistenceController.container.viewContext)
+                .environmentObject(NavigationController())
+                .preferredColorScheme(.dark)
         }
     }
 }

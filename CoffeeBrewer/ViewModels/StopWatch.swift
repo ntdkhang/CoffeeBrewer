@@ -31,16 +31,12 @@ class StopWatch: ObservableObject {
         seconds = 0
     }
     
-    func lap() -> Int {
-        0
+    func writeTime(for lap: Int) -> String {
+        return "\(String(lap / 60)):\(String(lap % 60))"
     }
     
-    var timeInSeconds: Int {
-        seconds % 60
-    }
-    
-    var timeInMinutes: Int {
-        seconds / 60
+    func writeTime() -> String {
+        return "\(String(seconds / 60)):\(String(seconds % 60))"
     }
     
     enum StopWatchState {

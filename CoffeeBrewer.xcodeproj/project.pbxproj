@@ -19,6 +19,7 @@
 		4284832C26904F84005B8911 /* BrewV60.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4284832B26904F84005B8911 /* BrewV60.swift */; };
 		42851CFA2697F0ED0063F94B /* Coffee.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42851CF92697F0ED0063F94B /* Coffee.swift */; };
 		42851CFC2697F3D30063F94B /* Characteristics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42851CFB2697F3D30063F94B /* Characteristics.swift */; };
+		42864A6526A27D1700A8879F /* BrewList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42864A6426A27D1700A8879F /* BrewList.swift */; };
 		429653C926915A0A002802C2 /* CoffeeInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 429653C826915A0A002802C2 /* CoffeeInfo.swift */; };
 		429653CB269162ED002802C2 /* DataTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 429653CA269162ED002802C2 /* DataTemplate.swift */; };
 		42F3E06F269D2B1F008D8694 /* CoffeeList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42F3E06E269D2B1F008D8694 /* CoffeeList.swift */; };
@@ -39,6 +40,7 @@
 		4284832B26904F84005B8911 /* BrewV60.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrewV60.swift; sourceTree = "<group>"; };
 		42851CF92697F0ED0063F94B /* Coffee.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coffee.swift; sourceTree = "<group>"; };
 		42851CFB2697F3D30063F94B /* Characteristics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Characteristics.swift; sourceTree = "<group>"; };
+		42864A6426A27D1700A8879F /* BrewList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrewList.swift; sourceTree = "<group>"; };
 		429653C826915A0A002802C2 /* CoffeeInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoffeeInfo.swift; sourceTree = "<group>"; };
 		429653CA269162ED002802C2 /* DataTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataTemplate.swift; sourceTree = "<group>"; };
 		42F3E06E269D2B1F008D8694 /* CoffeeList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoffeeList.swift; sourceTree = "<group>"; };
@@ -61,10 +63,9 @@
 			children = (
 				420A6FEE2692B91100EFA05B /* StopWatch.swift */,
 				42851CF92697F0ED0063F94B /* Coffee.swift */,
-				42851CFB2697F3D30063F94B /* Characteristics.swift */,
-				4284831D26903E93005B8911 /* CoffeeBrewer.xcdatamodeld */,
-				4284831B26903E93005B8911 /* Persistence.swift */,
 				42F3E070269D3897008D8694 /* Brew.swift */,
+				42851CFB2697F3D30063F94B /* Characteristics.swift */,
+				4284831B26903E93005B8911 /* Persistence.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -114,6 +115,7 @@
 				4284832B26904F84005B8911 /* BrewV60.swift */,
 				420A6FF22692EC5F00EFA05B /* BrewReview.swift */,
 				42F3E06E269D2B1F008D8694 /* CoffeeList.swift */,
+				42864A6426A27D1700A8879F /* BrewList.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -123,6 +125,7 @@
 			children = (
 				429653C826915A0A002802C2 /* CoffeeInfo.swift */,
 				420A6FF02692E67800EFA05B /* BrewInfo.swift */,
+				4284831D26903E93005B8911 /* CoffeeBrewer.xcdatamodeld */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -210,6 +213,7 @@
 				420A6FEF2692B91100EFA05B /* StopWatch.swift in Sources */,
 				42851CFA2697F0ED0063F94B /* Coffee.swift in Sources */,
 				429653C926915A0A002802C2 /* CoffeeInfo.swift in Sources */,
+				42864A6526A27D1700A8879F /* BrewList.swift in Sources */,
 				429653CB269162ED002802C2 /* DataTemplate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

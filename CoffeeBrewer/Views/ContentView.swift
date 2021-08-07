@@ -14,9 +14,13 @@ struct ContentView: View {
     @EnvironmentObject var navigationController: NavigationController
     var body: some View {
         NavigationView {
-            NavigationLink(destination: BrewV60(),
-                            isActive: $navigationController.showMenu,
-                            label: { Text("Brew V60") })
+            VStack {
+                NavigationLink(destination: BrewV60(),
+                               isActive: $navigationController.showMenu,
+                               label: { Text("Brew V60") })
+                    
+                NavigationLink(destination: BrewList(), label: { Text("Brew list") })
+            }
         }
     }
 

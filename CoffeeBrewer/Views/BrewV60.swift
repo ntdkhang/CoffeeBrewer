@@ -49,25 +49,36 @@ struct BrewV60: View {
 }
 
 
+
+
+
 struct BrewProcess: View {
     @ObservedObject var stopWatch: StopWatch = StopWatch()
-    @State private var laps: [Int] = []
-    @State private var lastLap: Int = 0
+    @State private var laps: [String] = []
     @State private var showBrewReview: Bool = false
-                    
+            
     var coffeeInfo: CoffeeInfo
-                    
+    @State var lapsProcess = ""
+    
     var body: some View {
         VStack {
+            Text("-Laps-")
             ForEach(laps, id: \.self) { lap in
-                Text("\(lap)")
+                Text(lap)
             }
             
-            Text("\(stopWatch.seconds - lastLap)")
+            Text("-Time-")
+            if !(stopWatch.state == .stopped) {
+
+                Text(stopWatch.writeTime())
+            } else {
+                Text("")
+            }
+            
             HStack {
                 Button(action: {
-                    laps.append(stopWatch.seconds)
-                    lastLap = laps.last ?? 0
+                    laps.append(stopWatch.writeTime())
+
                 },      label: {
                     ZStack {
                         Circle()
@@ -90,9 +101,11 @@ struct BrewProcess: View {
                     ZStack {}
                     .frame(width: watchButtonSize, height: watchButtonSize)
                 }
+                
                 // MARK: - Show BrewReview
                 Button(action: {
-                    laps.append(stopWatch.seconds)
+                    laps.append(stopWatch.writeTime())
+                    writeProcess()
                     stopWatch.stop()
                     showBrewReview = true
                 },      label: {
@@ -106,7 +119,8 @@ struct BrewProcess: View {
         }
         .popover(isPresented: $showBrewReview,
                  content: { BrewReview(coffeeInfo: coffeeInfo,
-                                       methodName: "V60") })
+                                       methodName: "V60",
+                                       lapsProcess: lapsProcess) })
     }
     private var watchButtonSize: CGFloat = 100
     
@@ -115,6 +129,11 @@ struct BrewProcess: View {
         self.coffeeInfo = coffeeInfo
     }
     
+    private func writeProcess() {
+        for lapNumber in laps.indices {
+            lapsProcess.append("Step \(lapNumber + 1) at \(laps[lapNumber])\n")
+        }
+    }
 }
 
 
@@ -122,7 +141,7 @@ struct CoffeeChooser: View {
     @Environment(\.managedObjectContext) private var viewContext
 
     @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \Coffee.name_, ascending: true)],
+        sortDescriptors: [NSSortDescriptor(keyPath: \Coffee.brand_, ascending: true)],
         animation: .default)
     private var coffees: FetchedResults<Coffee>
     
@@ -153,6 +172,7 @@ struct CoffeeChooser: View {
                 
                 Section(header: Text("Choosee Existing Coffee")) {
                     ForEach(coffees, id: \.id_) { existingCoffee in
+                        
                         Text("\(existingCoffee.brand )'s \(existingCoffee.name)")
                             .onTapGesture {
                                 coffeeInfo = existingCoffee.coffeeInfo

@@ -29,12 +29,12 @@ public extension Brew {
     }
     
     var characteristics: Characteristics {
-        get { return characteristics_ ?? Characteristics() }
+        get { return characteristics_! }
         set { characteristics_ = newValue }
     }
     
     var coffee: Coffee {
-        get { return coffee_ ?? Coffee() }
+        get { return coffee_!}
         set { coffee_ = newValue }
     }
     

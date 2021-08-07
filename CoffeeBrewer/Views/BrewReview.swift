@@ -13,6 +13,9 @@ struct BrewReview: View {
     var coffeeInfo: CoffeeInfo
 
     var methodName: String
+    
+    var lapsProcess: String
+    
     @State var aromaQuantity: Double = 0
     @State var aromaQuality: Double = 0
     @State var acidityQuantity: Double = 0
@@ -26,7 +29,8 @@ struct BrewReview: View {
 
     @State var flavour: String = ""
     @State var note: String = ""
-
+    @State var process: String = ""
+    
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var navigationController: NavigationController
     var body: some View {
@@ -42,6 +46,10 @@ struct BrewReview: View {
 
             }
             List {
+                // MARK: - Process
+                Section(header: Text("Process")) {
+                    TextEditor(text: $process)
+                }
                 // MARK: - Aroma
                 Section(header: Text("Aroma")) {
                     HStack {
@@ -166,6 +174,9 @@ struct BrewReview: View {
             }
             .listStyle(.insetGrouped)
         }
+        .onAppear {
+            self.process = lapsProcess
+        }
     }
     
     private var textWidth: CGFloat {
@@ -173,10 +184,16 @@ struct BrewReview: View {
     }
 
     private func writeReview() {
-    let newBrew = Brew(context: viewContext)
+        
+        let newBrew = Brew(context: viewContext)
+        
+        newBrew.id = UUID()
         newBrew.methodName = methodName
-        newBrew.coffee = Coffee(context: viewContext)
-        newBrew.coffee.readCoffeeInfo(from: coffeeInfo)
+        let newCoffee = Coffee.withCoffeeInfo(coffeeInfo, context: viewContext)
+        newBrew.coffee = newCoffee
+        newBrew.process = process
+        newBrew.note = note
+        newBrew.date = Date()
         
         newBrew.characteristics = Characteristics(context: viewContext)
         
@@ -194,11 +211,13 @@ struct BrewReview: View {
         
         newBrew.characteristics.finishQuantity = Int(finishQuantity)
         newBrew.characteristics.finishQuality = Int(finishQuality)
-        newBrew.note = note
+       
+        newBrew.characteristics.flavour = flavour
         
         try? viewContext.save()
     }
 }
+
 
 //struct BrewReview_Previews: PreviewProvider {
 //    static var previews: some View {
