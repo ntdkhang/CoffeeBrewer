@@ -7,6 +7,7 @@
 
 import SwiftUI
 import CoreData
+import Combine
 
 struct BrewV60: View {
     @Environment(\.managedObjectContext) private var viewContext
@@ -15,182 +16,153 @@ struct BrewV60: View {
         animation: .default)
     private var coffees: FetchedResults<Coffee>
     @State var coffeeInfo = CoffeeInfo()
-    @State var presentCoffeeChooser: Bool = false
+    @State var showCoffeeChooser: Bool = false
     @State var startBrewing: Bool = false
     var body: some View {
         VStack {
-            List {
-                Label("Choose Coffee", systemImage: "globe.europe.africa.fill")
-                    .foregroundColor(.accentColor)
-                    .onTapGesture {
-                        presentCoffeeChooser = true
-                    }
-                    .popover(isPresented: $presentCoffeeChooser) {
-                        CoffeeChooser(coffeeInfo: $coffeeInfo)
-                            .environment(\.managedObjectContext, viewContext)
-    //                        .preferredColorScheme(.dark)
-                    }
-                
-                Text("Name: \(coffeeInfo.name)")
-                Text("Brand: \(coffeeInfo.brand)")
+            HStack {
+                VStack(alignment: .leading) {
+                    Button(action: {
+                        showCoffeeChooser = true
+                    },     label: {
+                        ZStack {
+                            Text("Choose Coffee").font(.system(size: 25))
+                        }
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 8)
+                            .background(Color.gray)
+                            .foregroundColor(.white)
+                            .cornerRadius(8)
+                    })
+                        
+                    Button(action: {
+                        // TODO: Save previous setting to user defaults
+                        // and load it here.
+                    },     label: {
+                        ZStack {
+                            Text("Previous Setting").font(.system(size: 25))
+                        }
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 8)
+                            .background(Color.gray)
+                            .foregroundColor(.white)
+                            .cornerRadius(8)
+                    })
+                }
+                .padding()
+                .popover(isPresented: $showCoffeeChooser) {
+                                CoffeeChooser(coffeeInfo: $coffeeInfo)
+                                    .environment(\.managedObjectContext, viewContext)
+                }
+                Spacer()
             }
-            .listStyle(.insetGrouped)
-            .navigationTitle("V60")
             
-        // TODO: Add coffee & water measurement
+        
+//            Spacer()
+            
+            
+            
+            // MARK: - Coffee & water measurement
+            CoffeeMeasurements()
+            
+            
+            Spacer()
+            
             if startBrewing == true {
                 BrewProcess(coffeeInfo: coffeeInfo)
             } else {
                 Button(action: {startBrewing = true },
                        label: { Text("Start Brewing") })
             }
+            
         }
+        .navigationTitle("V60")
     }
 }
 
 
 
-
-
-struct BrewProcess: View {
-    @ObservedObject var stopWatch: StopWatch = StopWatch()
-    @State private var laps: [String] = []
-    @State private var showBrewReview: Bool = false
-            
-    var coffeeInfo: CoffeeInfo
-    @State var lapsProcess = ""
+struct CoffeeMeasurements: View {
+    @State var coffeeWeight: Double = 1
+//    @State var water: Double = 1
+    @State var rate: Double = 15
+    
     
     var body: some View {
         VStack {
-            Text("-Laps-")
-            ForEach(laps, id: \.self) { lap in
-                Text(lap)
-            }
-            
-            Text("-Time-")
-            if !(stopWatch.state == .stopped) {
-
-                Text(stopWatch.writeTime())
-            } else {
-                Text("")
-            }
-            
-            HStack {
-                Button(action: {
-                    laps.append(stopWatch.writeTime())
-
-                },      label: {
-                    ZStack {
-                        Circle()
-                        Text("Lap").foregroundColor(.black)
-                    }
-                    .frame(width: watchButtonSize, height: watchButtonSize)
-                }).buttonStyle(PlainButtonStyle())
-                
-                if stopWatch.state == .stopped {
-                    Button(action: {
-                        stopWatch.start()
-                    },      label: {
-                        ZStack {
-                            Circle()
-                            Text("Start Timer").foregroundColor(.black)
-                        }
-                        .frame(width: watchButtonSize, height: watchButtonSize)
-                    }).buttonStyle(PlainButtonStyle())
-                } else {
-                    ZStack {}
-                    .frame(width: watchButtonSize, height: watchButtonSize)
-                }
-                
-                // MARK: - Show BrewReview
-                Button(action: {
-                    laps.append(stopWatch.writeTime())
-                    writeProcess()
-                    stopWatch.stop()
-                    showBrewReview = true
-                },      label: {
-                    ZStack {
-                        Circle()
-                        Text("Stop").foregroundColor(.black)
-                    }
-                    .frame(width: watchButtonSize, height: watchButtonSize)
-                }).buttonStyle(PlainButtonStyle())
-            }
-        }
-        .popover(isPresented: $showBrewReview,
-                 content: { BrewReview(coffeeInfo: coffeeInfo,
-                                       methodName: "V60",
-                                       lapsProcess: lapsProcess) })
-    }
-    private var watchButtonSize: CGFloat = 100
-    
-    
-    init(coffeeInfo: CoffeeInfo) {
-        self.coffeeInfo = coffeeInfo
-    }
-    
-    private func writeProcess() {
-        for lapNumber in laps.indices {
-            lapsProcess.append("Step \(lapNumber + 1) at \(laps[lapNumber])\n")
-        }
-    }
-}
-
-
-struct CoffeeChooser: View {
-    @Environment(\.managedObjectContext) private var viewContext
-
-    @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \Coffee.brand_, ascending: true)],
-        animation: .default)
-    private var coffees: FetchedResults<Coffee>
-    
-    @State private var name: String = ""
-    @State private var brand: String = ""
-    @Binding var coffeeInfo: CoffeeInfo
-    @Environment(\.presentationMode) var presentationMode
-    var body: some View {
-        VStack {
-            Spacer()
-            HStack {
-                Spacer()
-                Button("Done") {
-                    if !(name.isEmpty && brand.isEmpty) {
-                        coffeeInfo.name = name
-                        coffeeInfo.brand = brand
-                    }
-                    presentationMode.wrappedValue.dismiss()
-                }
-            }.padding()
-//            Spacer()
-            Form {
-                Section(header: Text("New Coffee")) {
-                    TextField("Name", text: $name)
+            Text("Coffee Weight")
+            Text("\(Int(coffeeWeight)) g")
+                .font(.body.monospacedDigit())
+            Slider(value: $coffeeWeight, in: 5...70, step: 1)
+            HStack(alignment: .top){
+                VStack {
+                    Text("Coffee : Water")
+                    Text("    1 : \(Int(rate))")
+                        .font(Font.body.monospacedDigit())
+                    Slider(value: $rate, in: 10...25, step: 1)
                     
-                    TextField("Brand", text: $brand)
+                }.padding()
+
+                Spacer()
+
+                // MARK: - Water
+                VStack {
+                    Text("Total water weight")
+                    Text("\(waterWeight) g")
+                        .font(.body.monospacedDigit())
                 }
-                
-                Section(header: Text("Choosee Existing Coffee")) {
-                    ForEach(coffees, id: \.id_) { existingCoffee in
-                        
-                        Text("\(existingCoffee.brand )'s \(existingCoffee.name)")
-                            .onTapGesture {
-                                coffeeInfo = existingCoffee.coffeeInfo
-                                presentationMode.wrappedValue.dismiss()
-                            }
-                    }
-                }
+                .padding()
             }
-            
         }
     }
+    
+    var waterWeight: Int {
+        Int(coffeeWeight * rate)
+    }
+
+    
+    
+//    var body: some View {
+//        VStack {
+//            Text("Coffee : Water")
+//            Text("    1 : \(Int(rate))")
+//                .font(Font.body.monospacedDigit())
+//            Slider(value: $rate, in: 10...25, step: 1)
+//            Button("Change coffee weight to 30") {
+//                coffeeWeight = 30
+//            }
+//            HStack {
+//                VStack {
+//                    Text("Coffee Weight")
+//                    Picker("HI", selection: $coffeeWeight) {
+//                        ForEach(1...100, id: \.self) {
+//                            Text("\($0)")
+//                        }
+//                    }.pickerStyle(.inline)
+//                        .frame(width: wheelWidth, height: wheelHeight)
+//                        .clipped()
+//                }.padding()
+//
+//                Spacer()
+//
+//                // MARK: - Water
+//                VStack {
+//                    Text("\(water)")
+//                }
+//                .padding()
+//            }
+//        }
+//    }
+//
+
 }
 
 struct BrewV60_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
             BrewV60()
-//                .environment(\.colorScheme, .dark)
+//            CoffeeMeasurements()
+                .environment(\.colorScheme, .dark)
         }
         .preferredColorScheme(.dark)
     }

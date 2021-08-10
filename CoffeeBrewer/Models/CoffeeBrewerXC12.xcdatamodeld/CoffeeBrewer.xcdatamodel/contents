@@ -30,8 +30,8 @@
         <relationship name="brews_" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Brew" inverseName="coffee_" inverseEntity="Brew"/>
     </entity>
     <elements>
-        <element name="Brew" positionX="-63" positionY="-18" width="128" height="14"/>
-        <element name="Characteristics" positionX="-54" positionY="-9" width="128" height="14"/>
-        <element name="Coffee" positionX="-36" positionY="9" width="128" height="14"/>
+        <element name="Brew" positionX="-371.3974609375" positionY="-336.1806030273437" width="128" height="28"/>
+        <element name="Characteristics" positionX="-218.15283203125" positionY="-97.462890625" width="128" height="223"/>
+        <element name="Coffee" positionX="-555.7998657226562" positionY="-45.209716796875" width="128" height="28"/>
     </elements>
 </model>
