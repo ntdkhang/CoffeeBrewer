@@ -26,3 +26,22 @@
 //        self.id = id ?? UUID()
 //    }
 //}
+
+
+import Foundation
+
+struct BrewSetting: Identifiable, Codable {
+    var coffeeInfo: CoffeeInfo
+    var coffeeWeight: Int
+    var coffeeWaterRate: Int
+    var id: UUID
+}
+
+extension BrewSetting {
+    init(coffeeInfo: CoffeeInfo? = nil, coffeeWeight: Int? = nil, coffeeWaterRate: Int? = nil, id: UUID? = nil) {
+        self.coffeeInfo = coffeeInfo ?? CoffeeInfo()
+        self.coffeeWeight = coffeeWeight ?? 0
+        self.coffeeWaterRate = coffeeWaterRate ?? 0
+        self.id = id ?? UUID()
+    }
+}

@@ -24,6 +24,7 @@ struct CoffeeList: View {
             List {
                 ForEach(coffees) { coffee in
                     Text("\(coffee.name)")
+                    Text("\(coffee)")
                 }.onDelete(perform: { deleteItems(offsets: $0)} )
             }
         }

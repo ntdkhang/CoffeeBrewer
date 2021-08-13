@@ -10,7 +10,8 @@ import SwiftUI
 struct BrewReview: View {
     @Environment(\.managedObjectContext) private var viewContext
     
-    var coffeeInfo: CoffeeInfo
+//    var coffeeInfo: CoffeeInfo
+    var brewSetting: BrewSetting
 
     var methodName: String
     
@@ -184,12 +185,12 @@ struct BrewReview: View {
     }
 
     private func writeReview() {
-        
+        saveSetting()
         let newBrew = Brew(context: viewContext)
         
         newBrew.id = UUID()
         newBrew.methodName = methodName
-        let newCoffee = Coffee.withCoffeeInfo(coffeeInfo, context: viewContext)
+        let newCoffee = Coffee.withCoffeeInfo(brewSetting.coffeeInfo, context: viewContext)
         newBrew.coffee = newCoffee
         newBrew.process = process
         newBrew.note = note
@@ -215,6 +216,14 @@ struct BrewReview: View {
         newBrew.characteristics.flavour = flavour
         
         try? viewContext.save()
+    }
+    
+    
+    func saveSetting() {
+        print(brewSetting)
+        if let encoded = try? JSONEncoder().encode(brewSetting) {
+            UserDefaults.standard.set(encoded, forKey: "BrewSetting")
+        }
     }
 }
 

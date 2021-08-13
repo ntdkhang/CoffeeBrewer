@@ -42,4 +42,14 @@ public extension Brew {
         get { return process_ ?? "ERROR PROCESS" }
         set { process_ = newValue }
     }
+    
+    var coffeeWeight: Int {
+        get { return Int(coffeeWeight_) }
+        set { coffeeWeight_ = Int64(newValue) }
+    }
+   
+    var coffeeWaterRate: Int {
+        get { return Int(coffeeWaterRate_) }
+        set { coffeeWeight_ = Int64(newValue) }
+    }
 }

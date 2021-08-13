@@ -15,18 +15,22 @@ struct BrewV60: View {
         sortDescriptors: [NSSortDescriptor(keyPath: \Coffee.name_, ascending: true)],
         animation: .default)
     private var coffees: FetchedResults<Coffee>
-    @State var coffeeInfo = CoffeeInfo()
+//    @State var coffeeInfo = CoffeeInfo()
+    @State var brewSetting = BrewSetting()
     @State var showCoffeeChooser: Bool = false
     @State var startBrewing: Bool = false
+    @State var previousSetting: BrewSetting? = nil
+    @State var usePreviousSetting = false
+    
     var body: some View {
-        VStack {
+        VStack(alignment: .leading) {
             HStack {
                 VStack(alignment: .leading) {
                     Button(action: {
                         showCoffeeChooser = true
                     },     label: {
                         ZStack {
-                            Text("Choose Coffee").font(.system(size: 25))
+                            Text("Choose Coffee  ").font(.system(size: 25))
                         }
                             .padding(.horizontal, 16)
                             .padding(.vertical, 8)
@@ -36,8 +40,10 @@ struct BrewV60: View {
                     })
                         
                     Button(action: {
-                        // TODO: Save previous setting to user defaults
-                        // and load it here.
+                        if previousSetting != nil {
+                            brewSetting = previousSetting!
+                            usePreviousSetting = true
+                        }
                     },     label: {
                         ZStack {
                             Text("Previous Setting").font(.system(size: 25))
@@ -48,35 +54,63 @@ struct BrewV60: View {
                             .foregroundColor(.white)
                             .cornerRadius(8)
                     })
+                        .padding(.top)
                 }
                 .padding()
                 .popover(isPresented: $showCoffeeChooser) {
-                                CoffeeChooser(coffeeInfo: $coffeeInfo)
-                                    .environment(\.managedObjectContext, viewContext)
+                    CoffeeChooser(coffeeInfo: $brewSetting.coffeeInfo)
+                        .environment(\.managedObjectContext, viewContext)
                 }
                 Spacer()
             }
+            Group {
+                Text("Brand: \(brewSetting.coffeeInfo.brand)")
+                Text("Name: \(brewSetting.coffeeInfo.name)")
+            }
+            .padding(.init(top: 4, leading: 16, bottom: 0, trailing: 0))
+            .font(.system(size: 24))
+            .foregroundColor(.yellow)
             
-        
-//            Spacer()
+            Spacer()
             
             
             
             // MARK: - Coffee & water measurement
-            CoffeeMeasurements()
+            CoffeeMeasurements(brewSetting: $brewSetting,
+                               previousSetting: previousSetting ?? brewSetting,
+                               usePreviousSetting: usePreviousSetting)
             
             
             Spacer()
+            Spacer()
+                 
             
-            if startBrewing == true {
-                BrewProcess(coffeeInfo: coffeeInfo)
-            } else {
-                Button(action: {startBrewing = true },
-                       label: { Text("Start Brewing") })
+            HStack {
+                Spacer()
+                if startBrewing == true {
+                    BrewProcess(brewSetting: brewSetting)
+                } else {
+                    Button(action: {startBrewing = true },
+                           label: { Text("Start Brewing")
+                            .font(.system(size: 20))
+                    })
+                }
+                Spacer()
             }
             
         }
         .navigationTitle("V60")
+        .onAppear(perform: { loadPreviousSetting() })
+    }
+    
+    func loadPreviousSetting() {
+        if let data = UserDefaults.standard.data(forKey: "BrewSetting") {
+            if let decodedSetting = try? JSONDecoder()
+                .decode(BrewSetting.self, from: data) {
+                previousSetting = decodedSetting
+                
+            }
+        }
     }
 }
 
@@ -84,44 +118,68 @@ struct BrewV60: View {
 
 struct CoffeeMeasurements: View {
     @State var coffeeWeight: Double = 1
-//    @State var water: Double = 1
-    @State var rate: Double = 15
-    
+    @State var coffeeWaterRate: Double = 15
+    @Binding var brewSetting: BrewSetting
+    var previousSetting: BrewSetting
+    var usePreviousSetting: Bool
     
     var body: some View {
         VStack {
             Text("Coffee Weight")
             Text("\(Int(coffeeWeight)) g")
-                .font(.body.monospacedDigit())
-            Slider(value: $coffeeWeight, in: 5...70, step: 1)
+            Slider(value: $coffeeWeight, in: 5...70, step: 1,
+                   onEditingChanged: { _ in
+                brewSetting.coffeeWeight = Int(coffeeWeight)
+            })
+            
+            // MARK: - Coffee : Water rate
             HStack(alignment: .top){
                 VStack {
                     Text("Coffee : Water")
-                    Text("    1 : \(Int(rate))")
-                        .font(Font.body.monospacedDigit())
-                    Slider(value: $rate, in: 10...25, step: 1)
+                    Text("    1 : \(Int(coffeeWaterRate))")
+                    Slider(value: $coffeeWaterRate, in: 10...25, step: 1
+                           , onEditingChanged: { _ in
+                        brewSetting.coffeeWaterRate = Int(coffeeWaterRate)
+                    })
                     
                 }.padding()
-
+                
                 Spacer()
-
-                // MARK: - Water
+                
+            // MARK: - Water
                 VStack {
                     Text("Total water weight")
                     Text("\(waterWeight) g")
-                        .font(.body.monospacedDigit())
                 }
                 .padding()
             }
         }
+            .onChange(of: usePreviousSetting,
+                      perform: { _ in
+                coffeeWeight = Double(previousSetting.coffeeWeight)
+                coffeeWaterRate = Double(previousSetting.coffeeWaterRate)
+            } )
+            .font(.system(size: fontSize).monospacedDigit())
     }
     
     var waterWeight: Int {
-        Int(coffeeWeight * rate)
+        Int(coffeeWeight * coffeeWaterRate)
     }
-
+    
+    var fontSize: CGFloat = 20
     
     
+//    init(brewSetting brewBinding: Binding<BrewSetting>, previousSetting: BrewSetting) {
+//        self._brewSetting = brewBinding
+//        if brewBinding.wrappedValue.coffeeWeight > 0 {
+//            self.coffeeWeight = Double(brewBinding.wrappedValue.coffeeWeight)
+//            self.coffeeWaterRate = Double(brewBinding.wrappedValue.coffeeWaterRate)
+//        } else {
+//            self.coffeeWeight = 1
+//            self.coffeeWaterRate = 15
+//        }
+//        return
+//    }
 //    var body: some View {
 //        VStack {
 //            Text("Coffee : Water")

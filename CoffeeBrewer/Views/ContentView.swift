@@ -20,6 +20,9 @@ struct ContentView: View {
                                label: { Text("Brew V60") })
                     
                 NavigationLink(destination: BrewList(), label: { Text("Brew list") })
+                
+                NavigationLink(destination: CoffeeList(),
+                               label: { Text("Coffee List") })
             }
         }
     }

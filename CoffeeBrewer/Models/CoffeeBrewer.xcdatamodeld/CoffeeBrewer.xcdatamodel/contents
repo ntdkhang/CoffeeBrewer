@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="19186" systemVersion="20F71" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="Brew" representedClassName="Brew" syncable="YES" codeGenerationType="class">
+        <attribute name="coffeeWaterRate_" optional="YES" attributeType="Integer 64" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="coffeeWeight_" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="date_" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="id_" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="methodName_" optional="YES" attributeType="String"/>
@@ -30,7 +32,7 @@
         <relationship name="brews_" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Brew" inverseName="coffee_" inverseEntity="Brew"/>
     </entity>
     <elements>
-        <element name="Brew" positionX="-63" positionY="-18" width="128" height="14"/>
+        <element name="Brew" positionX="-63" positionY="-18" width="128" height="164"/>
         <element name="Characteristics" positionX="-54" positionY="-9" width="128" height="14"/>
         <element name="Coffee" positionX="-36" positionY="9" width="128" height="14"/>
     </elements>

@@ -11,7 +11,8 @@ struct BrewProcess: View {
     @State private var laps: [String] = []
     @State private var showBrewReview: Bool = false
             
-    var coffeeInfo: CoffeeInfo
+//    var coffeeInfo: CoffeeInfo
+    var brewSetting: BrewSetting
     @State var lapsProcess = ""
     
     var body: some View {
@@ -72,16 +73,13 @@ struct BrewProcess: View {
             }
         }
         .popover(isPresented: $showBrewReview,
-                 content: { BrewReview(coffeeInfo: coffeeInfo,
+                 content: { BrewReview(brewSetting: brewSetting,
                                        methodName: "V60",
                                        lapsProcess: lapsProcess) })
     }
     private var watchButtonSize: CGFloat = 100
     
     
-    init(coffeeInfo: CoffeeInfo) {
-        self.coffeeInfo = coffeeInfo
-    }
     
     private func writeProcess() {
         for lapNumber in laps.indices {
@@ -90,8 +88,16 @@ struct BrewProcess: View {
     }
 }
 
+extension BrewProcess {
+    init(brewSetting: BrewSetting) {
+        self.brewSetting = brewSetting
+    }
+}
+
+
 struct BrewProcess_Previews: PreviewProvider {
     static var previews: some View {
-        BrewProcess(coffeeInfo: CoffeeInfo())
+        BrewProcess(brewSetting: BrewSetting())
+                    
     }
 }

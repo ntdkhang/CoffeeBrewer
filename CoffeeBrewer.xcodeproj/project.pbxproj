@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		420A6FEF2692B91100EFA05B /* StopWatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 420A6FEE2692B91100EFA05B /* StopWatch.swift */; };
-		420A6FF12692E67800EFA05B /* BrewInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 420A6FF02692E67800EFA05B /* BrewInfo.swift */; };
+		420A6FF12692E67800EFA05B /* BrewSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 420A6FF02692E67800EFA05B /* BrewSetting.swift */; };
 		420A6FF32692EC5F00EFA05B /* BrewReview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 420A6FF22692EC5F00EFA05B /* BrewReview.swift */; };
 		4215FA3C26BF2E5F0027DA40 /* BrewProcess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4215FA3B26BF2E5F0027DA40 /* BrewProcess.swift */; };
 		421ACC5026C05ADC002BB6F0 /* CoffeeBrewer.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 421ACC4E26C05ADC002BB6F0 /* CoffeeBrewer.xcdatamodeld */; };
@@ -25,13 +25,14 @@
 		42864A6526A27D1700A8879F /* BrewList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42864A6426A27D1700A8879F /* BrewList.swift */; };
 		429653C926915A0A002802C2 /* CoffeeInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 429653C826915A0A002802C2 /* CoffeeInfo.swift */; };
 		429653CB269162ED002802C2 /* DataTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 429653CA269162ED002802C2 /* DataTemplate.swift */; };
+		4298DD4F26C6C6D800AE1241 /* BrewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4298DD4E26C6C6D800AE1241 /* BrewViewModel.swift */; };
 		42F3E06F269D2B1F008D8694 /* CoffeeList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42F3E06E269D2B1F008D8694 /* CoffeeList.swift */; };
 		42F3E071269D3897008D8694 /* Brew.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42F3E070269D3897008D8694 /* Brew.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		420A6FEE2692B91100EFA05B /* StopWatch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopWatch.swift; sourceTree = "<group>"; };
-		420A6FF02692E67800EFA05B /* BrewInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrewInfo.swift; sourceTree = "<group>"; };
+		420A6FF02692E67800EFA05B /* BrewSetting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrewSetting.swift; sourceTree = "<group>"; };
 		420A6FF22692EC5F00EFA05B /* BrewReview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrewReview.swift; sourceTree = "<group>"; };
 		4215FA3B26BF2E5F0027DA40 /* BrewProcess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrewProcess.swift; sourceTree = "<group>"; };
 		421ACC4F26C05ADC002BB6F0 /* CoffeeBrewer.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = CoffeeBrewer.xcdatamodel; sourceTree = "<group>"; };
@@ -49,6 +50,7 @@
 		42864A6426A27D1700A8879F /* BrewList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrewList.swift; sourceTree = "<group>"; };
 		429653C826915A0A002802C2 /* CoffeeInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoffeeInfo.swift; sourceTree = "<group>"; };
 		429653CA269162ED002802C2 /* DataTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataTemplate.swift; sourceTree = "<group>"; };
+		4298DD4E26C6C6D800AE1241 /* BrewViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrewViewModel.swift; sourceTree = "<group>"; };
 		42F3E06E269D2B1F008D8694 /* CoffeeList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoffeeList.swift; sourceTree = "<group>"; };
 		42F3E070269D3897008D8694 /* Brew.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Brew.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -67,6 +69,7 @@
 		420A6FED2692B8F500EFA05B /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				4298DD4E26C6C6D800AE1241 /* BrewViewModel.swift */,
 				420A6FEE2692B91100EFA05B /* StopWatch.swift */,
 				42851CF92697F0ED0063F94B /* Coffee.swift */,
 				42F3E070269D3897008D8694 /* Brew.swift */,
@@ -133,7 +136,7 @@
 			isa = PBXGroup;
 			children = (
 				429653C826915A0A002802C2 /* CoffeeInfo.swift */,
-				420A6FF02692E67800EFA05B /* BrewInfo.swift */,
+				420A6FF02692E67800EFA05B /* BrewSetting.swift */,
 				421ACC4E26C05ADC002BB6F0 /* CoffeeBrewer.xcdatamodeld */,
 			);
 			path = Models;
@@ -212,7 +215,7 @@
 				42F3E06F269D2B1F008D8694 /* CoffeeList.swift in Sources */,
 				421ACC5626C1970A002BB6F0 /* CoffeeChooser.swift in Sources */,
 				4284831C26903E93005B8911 /* Persistence.swift in Sources */,
-				420A6FF12692E67800EFA05B /* BrewInfo.swift in Sources */,
+				420A6FF12692E67800EFA05B /* BrewSetting.swift in Sources */,
 				4284832C26904F84005B8911 /* BrewV60.swift in Sources */,
 				42F3E071269D3897008D8694 /* Brew.swift in Sources */,
 				421ACC5426C06745002BB6F0 /* CustomButtons.swift in Sources */,
@@ -223,6 +226,7 @@
 				4284831326903E91005B8911 /* CoffeeBrewerApp.swift in Sources */,
 				420A6FEF2692B91100EFA05B /* StopWatch.swift in Sources */,
 				4215FA3C26BF2E5F0027DA40 /* BrewProcess.swift in Sources */,
+				4298DD4F26C6C6D800AE1241 /* BrewViewModel.swift in Sources */,
 				42851CFA2697F0ED0063F94B /* Coffee.swift in Sources */,
 				429653C926915A0A002802C2 /* CoffeeInfo.swift in Sources */,
 				42864A6526A27D1700A8879F /* BrewList.swift in Sources */,
