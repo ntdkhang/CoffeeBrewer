@@ -220,7 +220,6 @@ struct BrewReview: View {
     
     
     func saveSetting() {
-        print(brewSetting)
         if let encoded = try? JSONEncoder().encode(brewSetting) {
             UserDefaults.standard.set(encoded, forKey: "BrewSetting")
         }

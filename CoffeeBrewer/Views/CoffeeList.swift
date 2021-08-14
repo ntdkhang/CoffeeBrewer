@@ -10,15 +10,15 @@ import SwiftUI
 struct CoffeeList: View {
     @Environment(\.managedObjectContext) private var viewContext
     
-    @FetchRequest(sortDescriptors: [NSSortDescriptor(keyPath: \Coffee.name_, ascending: true)], predicate: nil, animation: .default)
+    @FetchRequest(sortDescriptors: [NSSortDescriptor(keyPath: \Coffee.name_, ascending: true)],
+//                  predicate: NSPredicate(format: "brand_ = %@ && name_ = %@",
+//                                         "Wassup", "Ayo"),
+                  animation: .default)
     private var coffees: FetchedResults<Coffee>
     
     
     var body: some View {
         VStack {
-//            Button("add new item") {
-//                addItem()
-//            }
             Button(action: {},
                    label: { Text("Filter") })
             List {
