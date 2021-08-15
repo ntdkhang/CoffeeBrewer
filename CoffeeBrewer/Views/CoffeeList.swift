@@ -8,19 +8,25 @@
 import SwiftUI
 
 struct CoffeeList: View {
-    @Environment(\.managedObjectContext) private var viewContext
-    
-    @FetchRequest(sortDescriptors: [NSSortDescriptor(keyPath: \Coffee.name_, ascending: true)],
-//                  predicate: NSPredicate(format: "brand_ = %@ && name_ = %@",
-//                                         "Wassup", "Ayo"),
-                  animation: .default)
-    private var coffees: FetchedResults<Coffee>
+    @Environment(\.managedObjectContext) private var context
+    @State var coffees: [Coffee]
+    @State var filterBrand: String = ""
+    @State var predicate: NSPredicate?
+    @State var brands: [String]
     
     
     var body: some View {
         VStack {
-            Button(action: {},
-                   label: { Text("Filter") })
+            Menu(content: {
+                ForEach(brands, id: \.self) { brand in
+                    Button("\(brand)", action: { filterBrand = brand })
+                }
+            }, label: {
+                Text("Filter Brand")
+            })
+            
+            Text("\(filterBrand)")
+            
             List {
                 ForEach(coffees) { coffee in
                     Text("\(coffee.name)")
@@ -28,30 +34,49 @@ struct CoffeeList: View {
                 }.onDelete(perform: { deleteItems(offsets: $0)} )
             }
         }
-    }
-    
-    private func addItem() {
-        withAnimation {
-            let newCoffee = Coffee(context: viewContext)
-            newCoffee.name = "BlaBlo \(Int.random(in: 0...100))"
-
-            do {
-                try viewContext.save()
-            } catch {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                let nsError = error as NSError
-                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+        .onAppear {
+            fetchCoffees()
+            brands = uniqueBrands()
+        }
+        .onChange(of: filterBrand) { _ in
+            if filterBrand != "" {
+                predicate = NSPredicate(format: "brand_ = %@", filterBrand)
+                fetchCoffees()
             }
         }
     }
+    
+    init() {
+        coffees = []
+        filterBrand = ""
+        predicate = nil
+        brands = []
+    }
+    
+    func fetchCoffees() {
+        let fetchRequest = Coffee.fetchRequest()
+        if predicate != nil {
+            fetchRequest.predicate = predicate
+        }
+        fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \Coffee.brand_,
+                                                         ascending: true)]
+        coffees = try! context.fetch(fetchRequest)
+        
+    }
+    
+    private func uniqueBrands() -> [String] {
+        var brands = Set<String>()
+        let _ = coffees.map { brands.insert($0.brand) }
+        return Array(brands)
+    }
+    
 
     private func deleteItems(offsets: IndexSet) {
         withAnimation {
-            offsets.map { coffees[$0] }.forEach(viewContext.delete)
+            offsets.map { coffees[$0] }.forEach(context.delete)
 
             do {
-                try viewContext.save()
+                try context.save()
             } catch {
                 // Replace this implementation with code to handle the error appropriately.
                 // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
@@ -60,6 +85,7 @@ struct CoffeeList: View {
             }
         }
     }
+    
 }
 
 struct CoffeeList_Previews: PreviewProvider {
